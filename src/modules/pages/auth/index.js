@@ -1,21 +1,43 @@
 import React, {useState, useEffect} from 'react'
 import {Link} from 'react-router-dom'
+import axios from 'axios'
 
 const Auth = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [isSubmit, setIsSubmit] = useState(false)
 
   // console.log('email', email, 'password', password)
 
   const handleSubmit = (event) => {
     event.preventDefault()
     console.log('data', email, password)
+    setIsSubmit(true)
   }
 
   useEffect(() => {
-    console.log('effect was triggered')
-    document.title = email
-  }, [email])
+    if (!isSubmit) {
+      return
+    }
+
+    axios('https://conduit.productionready.io/api/users/login', {
+      method: 'post',
+      data: {
+        user: {
+          email: 'qq@qq.com',
+          password: '123',
+        },
+      },
+    })
+      .then((result) => {
+        console.log('-=SUCCESS=-', result)
+        setIsSubmit(false)
+      })
+      .catch((err) => {
+        console.log('ERROR', err)
+        setIsSubmit(false)
+      })
+  })
 
   return (
     <div className="auth-page">
@@ -49,6 +71,7 @@ const Auth = () => {
                 <button
                   className="bnt btn-lg btn-primary pull-xs-right"
                   type="submit"
+                  disabled={isSubmit}
                 >
                   Sing in
                 </button>

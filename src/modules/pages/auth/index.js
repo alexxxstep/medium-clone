@@ -1,7 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { Link, Redirect } from 'react-router-dom'
+/* global localStorage, */
+
+import React, {useState, useEffect} from 'react'
+import {Link, Redirect} from 'react-router-dom'
 
 import useFetch from '../../hooks/useFetch'
+import useLocalStorage from '../../hooks/useLocalStorage'
 
 const Auth = (props) => {
   const isLogin = props.match.path === '/login'
@@ -14,20 +17,20 @@ const Auth = (props) => {
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
   const [isSubmit, setIsSubmit] = useState(false)
- 
 
   // eslint-disable-next-line
   const url = '/users/login'
-  const [{ response, isLoad, error }, doFetch] = useFetch(apiUrl)
+  const [{response, isLoad, error}, doFetch] = useFetch(apiUrl)
+  const [token, setToken] = useLocalStorage('token')
 
   // console.log('email', email, 'password', password)
 
-  // console.log('comment=-', props, isLogin)
+  console.log('token', token)
 
   const handleSubmit = (event) => {
     event.preventDefault()
     console.log('data', email, password)
-    const user = isLogin ? { email, password } : { email, password, username }
+    const user = isLogin ? {email, password} : {email, password, username}
     doFetch({
       method: 'post',
       data: {
@@ -40,7 +43,7 @@ const Auth = (props) => {
     if (!response) {
       return null
     }
-    localStorage.setItem('token', response.user.token)
+    setToken(response.user.token)
     setIsSubmit(true)
     console.log('response', response)
   }, [response])
@@ -76,7 +79,13 @@ const Auth = (props) => {
                 }
 
                 <fieldset className="form-group">
-                  <input type="email" className="form-control form-control-lg" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                  <input
+                    type="email"
+                    className="form-control form-control-lg"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
                 </fieldset>
                 <fieldset className="form-group">
                   <input
@@ -87,7 +96,11 @@ const Auth = (props) => {
                     onChange={(e) => setPassword(e.target.value)}
                   />
                 </fieldset>
-                <button className="bnt btn-lg btn-primary pull-xs-right" type="submit" disabled={isLoad}>
+                <button
+                  className="bnt btn-lg btn-primary pull-xs-right"
+                  type="submit"
+                  disabled={isLoad}
+                >
                   {pageTitle}
                 </button>
               </fieldset>

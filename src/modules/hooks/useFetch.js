@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import {useState, useEffect} from 'react'
 import axios from 'axios'
 
 // eslint-disable-next-line
@@ -27,11 +27,11 @@ export default (url) => {
         setResponse(res.data)
       })
       .catch((error) => {
-        console.log('ERROR', error)
+        console.log('-=ERROR=-', error)
         setIsLoad(false)
         setError(error.response.data)
       })
-  }, [isLoad])
+  }, [isLoad, options, url])
 
-  return [{ isLoad, response, error }, doFetch]
+  return [{isLoad, response, error}, doFetch]
 }
